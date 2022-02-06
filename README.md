@@ -1,0 +1,2 @@
+# varsion.rs
+varsion is a rust program that attempts to handle source code versioning universally by placing a VERSION file at the root of the source code. it uses this VERSION file to handle Semantic Versioning for the developers. the user just provides what segment of the version to change and it will handle everything else. varsion allows for pre-release and build segments to be added to the version.
