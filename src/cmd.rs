@@ -27,12 +27,12 @@ pub fn parse_command(args: Vec<String>) {
             }
         }
         "version" | "v" => {
-            show_version();
+            println!("{}", show_version());
         }
         "init" | "ini" => {
             init_varsion(args[1..].to_vec());
         }
-        "delete" | "d" => {
+        "delete" | "del" => {
             if is_args {
                 delete_varsion(Some(args[1].clone()));
             } else {
@@ -49,7 +49,7 @@ pub fn parse_command(args: Vec<String>) {
             show_semver_spec();
         }
         _ => {
-            println!("{}", "Unknown command");
+            println!("Unknown command");
             show_help(None);
         }
     }
@@ -169,12 +169,11 @@ fn get_commands() -> Vec<Command> {
 pub fn show_help(for_command: Option<String>) {
     // TODO: update to get VERSION from somewhere. Embedded in the binary? or env var?
     println!(
-        "varsion - v{} - https://chrwalte.com/varsion.rs ",
-        "0.0.0-who+knows"
+        "varsion - {} - https://chrwalte.com/varsion.rs ",
+        show_version()
     );
     println!("using semantic versioning specification - https://semver.org/");
 
-    // TODO: Fix Console formatting:
     let commands = get_commands();
     if for_command.is_some() {
         // help for a specific command
@@ -182,16 +181,15 @@ pub fn show_help(for_command: Option<String>) {
         println!("showing [{}] command usage:", given_command);
         for command in commands {
             if command.name == given_command || command.shorts.contains(&given_command) {
-                println!(" help: \t {}", command.help);
-                println!(" usage: \t {}", command.usage);
-                if command.shorts.len() > 0 {
-                    println!(" alias: \t {}", command.shorts.join(", "));
-                }
-                if command.args.len() > 0 {
+                println!(" help: \t{}", command.help);
+                println!(" usage:\t{}", command.usage);
+                if !command.shorts.is_empty() {}
+                println!(" alias:\t {}", command.shorts.join(", "));
+                if !command.args.is_empty() {
                     println!("\n subcommands:");
                     for subcommand in command.args {
-                        println!(" - {}\t {}", subcommand.name, subcommand.help);
-                        println!(" - usage:\t {}", subcommand.usage);
+                        println!("   - {:<20}{}", subcommand.name + ":", subcommand.help);
+                        println!("   - {:<20}{}", "usage:", subcommand.usage);
                     }
                 }
                 return;
@@ -201,28 +199,27 @@ pub fn show_help(for_command: Option<String>) {
         show_help(None);
         return;
     }
-    // TODO: Fix Console formatting:
     println!("showing available commands:");
     let commands = get_commands();
     for command in commands {
-        if command.shorts.len() > 0 {
+        if !command.shorts.is_empty() {
             let shorts = command.shorts.join(", ");
-            println!(" - {}(OR {})   \t {}", command.name, shorts, command.help);
+            let command_and_shorts = format!("{:<10}({})", command.name, shorts);
+            println!(" - {:<20}{}", command_and_shorts, command.help);
         } else {
-            println!(" - {}   \t {}", command.name, command.help);
+            println!(" - {:<20}{}", command.name, command.help);
         }
     }
 }
 
-pub fn show_version() {
-    // TODO: update to get VERSION from somewhere. Embedded in the binary?
-    println!("v{}", "0.0.0-who+knows");
+pub fn show_version() -> String {
+    format!("v{}", env!("CARGO_PKG_VERSION"))
 }
 
 pub fn init_varsion(args: Vec<String>) {
     let mut version = Varsion::init(None, None);
     let mut use_dir = env::current_dir().unwrap();
-    if args.len() > 0 {
+    if !args.is_empty() {
         for arg in args {
             let path = Path::new(&arg);
             if path.is_dir() {
@@ -280,7 +277,7 @@ pub fn update_varsion(args: Vec<String>, by_amount: i32) {
     // TODO: add support for by_amount pass in BY USER
     let mut use_dir = env::current_dir().unwrap();
     let mut use_section = "patch".to_string();
-    if args.len() > 0 {
+    if !args.is_empty() {
         for arg in args {
             match arg.to_ascii_lowercase().as_str() {
                 "major" => {

@@ -23,13 +23,13 @@ pub struct Varsion {
 
 impl Varsion {
     pub fn init(pre: Option<String>, build: Option<String>) -> Varsion {
-        return Varsion {
+        Varsion {
             major: 0,
             minor: 1,
             patch: 0,
             pre,
             build,
-        };
+        }
     }
 
     pub fn update_major(mut self: Varsion, by_amount: i32) -> Varsion {
