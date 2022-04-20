@@ -1,5 +1,11 @@
-
 # varsion.rs changelog
+
+## VERSION 2.0.1
+
+- updated formatting of help output
+- corrected version not using real version
+- corrected delete shorthand command not being real shorthand
+- followed some clippy advice
 
 ## VERSION 2.0.0
 
